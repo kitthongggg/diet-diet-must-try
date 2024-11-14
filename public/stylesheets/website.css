@@ -25,7 +25,7 @@ a:hover {
 /* style the video  */
 .app-video video {
     width: 100%;
-    max-width: 600px; /* Adjust the max-width to fit your design */
+    max-width: 200px; /* Adjust the max-width to fit your design */
     height: auto;
     object-fit: cover;
     border-radius: 8px; /* Optional styling for rounded corners */
@@ -95,8 +95,27 @@ nav ul li a {
     padding: 10px;
 }
 
+.app-video {
+    width: 300px; /* Set a fixed width for the video container */
+    height: 520px;
+    margin-right: 40px; /* Move video slightly to the right */
+    margin-left: 300px;
+}
+
+.app-image {
+    max-width: 285px; /* Set a max width for the image */
+    margin-left: -20px; /* Adds space between the video and the image */
+    margin-top: -65px;
+}
+
+.app-image img {
+    width: 100%;
+    border-radius: 10px; /* Optional: Adds rounded corners to the image */
+}
+
 .content {
-    max-width: 600px;
+    max-width: 700px;
+    margin-left: 0px;
 }
 
 .logo1 {
@@ -128,17 +147,6 @@ p {
 }
 
 
-.app-image img {
-    width: 200px; /* Adjust size as needed */
-    height: auto;
-    margin-left: 65px;
-}
-
-.app-image2 img {
-    width: 200px; /* Adjust size as needed */
-    height: auto;
-    margin-left: 70px;
-}
 
 @media (max-width: 768px) {
     .overlay {
@@ -494,7 +502,7 @@ footer ul li a:hover {
 .promo-section {
     background-color: #81965e8b; /* Light sage background */
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 0px;
     text-align: center;
     color: #3d3b30;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

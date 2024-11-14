@@ -1,435 +1,441 @@
-<!DOCTYPE html>
-<html lang="en">
-    <link rel="stylesheet" href="/stylesheets/main.css">
-    <link rel="stylesheet" href="/stylesheets/website.css">
-<script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
 
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCgCI8nT115iV-6a7Lqte9owMfO9wP8vGc",
-        authDomain: "diet-diet-must-try.firebaseapp.com",
-        projectId: "diet-diet-must-try",
-        storageBucket: "diet-diet-must-try.appspot.com",
-        messagingSenderId: "290248802761",
-        appId: "1:290248802761:web:b9e884699e9cfa278f6818",
-        measurementId: "G-WHNXCYXRBE"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app); // Initialize Firestore
-
-
-    // Load testimonials
-    async function loadTestimonials() {
-        const testimonialList = document.getElementById('testimonial-list');
-        testimonialList.innerHTML = ''; // Clear previous testimonials
-        const maxTestimonials = 3; // Limit to a maximum of 3 testimonials
-
-        try {
-            const querySnapshot = await getDocs(collection(db, "AppRating"));
-            if (querySnapshot.empty) {
-                console.log("No testimonials found.");
-                testimonialList.innerHTML = "<p>No testimonials available.</p>";
-                return;
-            }
-
-            // Convert querySnapshot to an array
-            const testimonials = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                testimonials.push({
-                    review: data.review || 'No message available',
-                    username: data.username || 'Anonymous',
-                    star: data.star || 0,
-                    date: data.date || new Date(0)
+    <!DOCTYPE html>
+    <html lang="en">
+        <link rel="stylesheet" href="/stylesheets/main.css">
+        <link rel="stylesheet" href="/stylesheets/website.css">
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+    
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgCI8nT115iV-6a7Lqte9owMfO9wP8vGc",
+            authDomain: "diet-diet-must-try.firebaseapp.com",
+            projectId: "diet-diet-must-try",
+            storageBucket: "diet-diet-must-try.appspot.com",
+            messagingSenderId: "290248802761",
+            appId: "1:290248802761:web:b9e884699e9cfa278f6818",
+            measurementId: "G-WHNXCYXRBE"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app); // Initialize Firestore
+    
+    
+        // Load testimonials
+        async function loadTestimonials() {
+            const testimonialList = document.getElementById('testimonial-list');
+            testimonialList.innerHTML = ''; // Clear previous testimonials
+            const maxTestimonials = 3; // Limit to a maximum of 3 testimonials
+    
+            try {
+                const querySnapshot = await getDocs(collection(db, "AppRating"));
+                if (querySnapshot.empty) {
+                    console.log("No testimonials found.");
+                    testimonialList.innerHTML = "<p>No testimonials available.</p>";
+                    return;
+                }
+    
+                // Convert querySnapshot to an array
+                const testimonials = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    testimonials.push({
+                        review: data.review || 'No message available',
+                        username: data.username || 'Anonymous',
+                        star: data.star || 0,
+                        date: data.date || new Date(0)
+                    });
                 });
-            });
-
-            // Sort testimonials by star rating (descending) and date (descending)
-            testimonials.sort((a, b) => {
-                if (b.star !== a.star) {
-                    return b.star - a.star;
-                }
-                return new Date(b.date) - new Date(a.date);
-            });
-
-            // Display the top testimonials
-            for (let i = 0; i < Math.min(maxTestimonials, testimonials.length); i++) {
-                const testimonial = testimonials[i];
-                const testimonialItem = document.createElement('div');
-                testimonialItem.classList.add('testimonial');
-
-                // Create star icons based on the star rating
-                let stars = '';
-                for (let j = 1; j <= 5; j++) {
-                    stars += j <= testimonial.star ?
-                        '<span class="filled-star">★</span>' :
-                        '<span class="hollow-star">☆</span>';
-                }
-
-                testimonialItem.innerHTML = `
-                    <p>"${testimonial.review}" - ${testimonial.username} ${stars}</p>
-                `;
-                testimonialList.appendChild(testimonialItem);
-            }
-        } catch (error) {
-            console.error("Error fetching testimonials:", error);
-            testimonialList.innerHTML = "<p>Failed to load testimonials. Please try again later.</p>";
-        }
-    }
-
-    // Fetch Q&A data from Firestore
-    async function fetchQA() {
-        const qnaContainer = document.getElementById("qnaContainer");
-        const qnaRef = collection(db, "FAQ");
-        const maxCategories = 7; // Limit to a maximum of 7 categories
-
-        try {
-            const snapshot = await getDocs(qnaRef);
-            if (snapshot.empty) {
-                console.log("No FAQs found.");
-                qnaContainer.innerHTML = "<p>No FAQs available.</p>";
-                return;
-            }
-
-            // Create an object to group FAQs by category
-            const categories = {};
-
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const category = data.category || 'General'; // Default category
-                if (!categories[category]) {
-                    categories[category] = [];
-                }
-                categories[category].push({
-                    question: data.question,
-                    answer: data.answer,
-                    date: data.date || new Date(0),
-                    count: data.count || 0
-                });
-            });
-
-            // Sort FAQs within each category
-            for (const category in categories) {
-                categories[category].sort((a, b) => {
-                    if (b.count !== a.count) {
-                        return b.count - a.count;
+    
+                // Sort testimonials by star rating (descending) and date (descending)
+                testimonials.sort((a, b) => {
+                    if (b.star !== a.star) {
+                        return b.star - a.star;
                     }
                     return new Date(b.date) - new Date(a.date);
                 });
+    
+                // Display the top testimonials
+                for (let i = 0; i < Math.min(maxTestimonials, testimonials.length); i++) {
+                    const testimonial = testimonials[i];
+                    const testimonialItem = document.createElement('div');
+                    testimonialItem.classList.add('testimonial');
+    
+                    // Create star icons based on the star rating
+                    let stars = '';
+                    for (let j = 1; j <= 5; j++) {
+                        stars += j <= testimonial.star ?
+                            '<span class="filled-star">★</span>' :
+                            '<span class="hollow-star">☆</span>';
+                    }
+    
+                    testimonialItem.innerHTML = `
+                        <p>"${testimonial.review}" - ${testimonial.username} ${stars}</p>
+                    `;
+                    testimonialList.appendChild(testimonialItem);
+                }
+            } catch (error) {
+                console.error("Error fetching testimonials:", error);
+                testimonialList.innerHTML = "<p>Failed to load testimonials. Please try again later.</p>";
             }
-
-            // Get all categories
-            const categoryNames = Object.keys(categories).slice(0, maxCategories);
-
-            // Display the top categories with FAQ dropdowns
-            categoryNames.forEach(category => {
-                const categoryElement = document.createElement("div");
-                categoryElement.className = "category";
-                categoryElement.innerHTML = `
-                    <div class="category-name" onclick="toggleCategory(this)">
-                        <p>${category}</p>
-                        <span>&#9662;</span>
-                    </div>
-                    <div class="faqs" style="display: none;">
-                        ${categories[category].map(faq => `
-                            <div class="qna">
-                                <div class="question" onclick="toggleAnswer(this)">
-                                    <p>${faq.question}</p>
-                                    <span>&#9662;</span>
+        }
+    
+        // Fetch Q&A data from Firestore
+        async function fetchQA() {
+            const qnaContainer = document.getElementById("qnaContainer");
+            const qnaRef = collection(db, "FAQ");
+            const maxCategories = 7; // Limit to a maximum of 7 categories
+    
+            try {
+                const snapshot = await getDocs(qnaRef);
+                if (snapshot.empty) {
+                    console.log("No FAQs found.");
+                    qnaContainer.innerHTML = "<p>No FAQs available.</p>";
+                    return;
+                }
+    
+                // Create an object to group FAQs by category
+                const categories = {};
+    
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const category = data.category || 'General'; // Default category
+                    if (!categories[category]) {
+                        categories[category] = [];
+                    }
+                    categories[category].push({
+                        question: data.question,
+                        answer: data.answer,
+                        date: data.date || new Date(0),
+                        count: data.count || 0
+                    });
+                });
+    
+                // Sort FAQs within each category
+                for (const category in categories) {
+                    categories[category].sort((a, b) => {
+                        if (b.count !== a.count) {
+                            return b.count - a.count;
+                        }
+                        return new Date(b.date) - new Date(a.date);
+                    });
+                }
+    
+                // Get all categories
+                const categoryNames = Object.keys(categories).slice(0, maxCategories);
+    
+                // Display the top categories with FAQ dropdowns
+                categoryNames.forEach(category => {
+                    const categoryElement = document.createElement("div");
+                    categoryElement.className = "category";
+                    categoryElement.innerHTML = `
+                        <div class="category-name" onclick="toggleCategory(this)">
+                            <p>${category}</p>
+                            <span>&#9662;</span>
+                        </div>
+                        <div class="faqs" style="display: none;">
+                            ${categories[category].map(faq => `
+                                <div class="qna">
+                                    <div class="question" onclick="toggleAnswer(this)">
+                                        <p>${faq.question}</p>
+                                        <span>&#9662;</span>
+                                    </div>
+                                    <div class="answer" style="display: none;">
+                                        <p>${faq.answer}</p>
+                                    </div>
                                 </div>
-                                <div class="answer" style="display: none;">
-                                    <p>${faq.answer}</p>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                qnaContainer.appendChild(categoryElement);
-            });
-        } catch (error) {
-            console.error("Error fetching Q&A: ", error);
-        }
-    }
-
-    // Toggle answer visibility
-    window.toggleAnswer = function(element) {
-        const answer = element.nextElementSibling;
-        const arrow = element.querySelector("span");
-        if (answer.style.display === "block") {
-            answer.style.display = "none";
-            arrow.innerHTML = "&#9662;"; // Down arrow
-        } else {
-            answer.style.display = "block";
-            arrow.innerHTML = "&#9652;"; // Up arrow
-        }
-    };
-
-    // Toggle category visibility
-    window.toggleCategory = function(element) {
-        const faqs = element.nextElementSibling;
-        const arrow = element.querySelector("span");
-        if (faqs.style.display === "block") {
-            faqs.style.display = "none";
-            arrow.innerHTML = "&#9662;"; // Down arrow
-        } else {
-            faqs.style.display = "block";
-            arrow.innerHTML = "&#9652;"; // Up arrow
-        }
-    };
-
-    // Load testimonials and fetch Q&A data on page load
-    window.addEventListener('load', () => {
-        loadTestimonials();
-        fetchQA();
-    });
-
-
-    // Function to fetch promo code and discount value from Firestore
-const fetchPromoCode = async () => {
-    try {
-        const promoRef = collection(db, 'promoCode'); // Collection reference
-        const querySnapshot = await getDocs(promoRef);
-        
-        if (!querySnapshot.empty) {
-            // Assuming only one document in the promoCode collection
-            querySnapshot.forEach(doc => {
-                const promoCode = doc.data().promocode; // Adjusted field name to 'promocode'
-                const discountValue = doc.data().discountValue; // Adjusted field name to 'discountValue'
-                displayPromoCode(promoCode, discountValue);
-            });
-        } else {
-            console.log("No promo code found!");
-        }
-    } catch (error) {
-        console.error("Error fetching promo code:", error);
-    }
-};
-
-// Function to display promo code and discount value in the HTML
-const displayPromoCode = (promoCode, discountValue) => {
-    const promoContainer = document.getElementById('promoContainer');
-    promoContainer.innerHTML = `
-        <br>
-        <p>Use Promo Code: <strong>${promoCode}</strong> to save $${discountValue} on your consultation!</p>
-    `;
-};
-
-// Call fetchPromoCode to load the promo code on page load
-window.addEventListener('load', fetchPromoCode);
-
-
-</script>
-
-<head>
-
-    <!-- Import Firebase JS SDK -->
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet, Diet, Must Try! - Download Our App</title>
-    <link rel="stylesheet" href="website.css">
-</head>
-<body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="https://play.google.com/store">Download</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section id="home" class="intro">
-        <div class="overlay">
-            <div class="content">
-                <img src="logo.png" alt="Diet Diet Must Try Logo" class="logo1">
-                <h1>Get Your Apps Now!</h1>
-                <p>Achieve your health goals effortlessly with our personalized diet recommendation app!</p>
-                <!-- <p>Transform your health journey with just one tap. Download our diet app today!</p> -->
-                <a href="https://play.google.com/store" class="cta">Download Now!</a>
-            </div>
-            <div class="app-video">
-                <video autoplay muted loop>
-                    <source src="144.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        </div>
-    </section>    
-    
-    <!-- Why Choose Us (special features we offering) -->
-
-    <section id="features" class="features">
-        <h2>Why Choose Us</h2>
-        <div class="feature-container">
-            <div class="feature">
-                <h3>Personalized Diet Plans</h3>
-                <hr>
-                <p>Our app offers <b> personalized diet plans tailored to your health goals and dietary preferences </b>. We assess your lifestyle and specific needs to create flexible meal plans that help you lose weight, gain muscle, or maintain a healthy lifestyle without feeling deprived.</p>
-            </div>
-            <div class="feature">
-                <h3>Track Your Progress</h3>
-                <hr>
-                <p>Monitor your health journey with our tracking tools. Log your meals effortlessly using <b>image recognition</b> to gain insights into your habits. Visual progress reports help motivate you and allow you to set achievable milestones, making tracking rewarding and simple.</p>
-            </div>
-            <div class="feature">
-                <h3>Chat with a Nutritionist</h3>
-                <hr>
-                <p>Receive <b>real-time support</b> through our chat feature. Our nutritionists are available to answer questions and provide guidance, ensuring you have the professional support you need to succeed on your health journey and make informed nutritional choices.</p>
-            </div>
-        </div>
-    </section>
-    
-
-    <!-- Diet Calculator -->
-
-    <section id="diet-calculator" class="diet-calculator">
-        <h2>Try Out Our Diet Calculator!</h2>
-        <form id="calculator-form">
-            <div class="form-group">
-                <label for="age">Age:</label>
-                <input type="number" id="age" name="age" required>
-            </div>
-            <div class="form-group">
-                <label for="weight">Weight (kg):</label>
-                <input type="number" id="weight" name="weight" required>
-            </div>
-            <div class="form-group">
-                <label for="height">Height (cm):</label>
-                <input type="number" id="height" name="height" required>
-            </div>
-            <div class="form-group">
-                <label for="activity-level">Activity Level:</label>
-                <select id="activity-level" name="activity-level" required>
-                    <option value="1.2">Sedentary</option>
-                    <option value="1.375">Lightly active</option>
-                    <option value="1.55">Moderately active</option>
-                    <option value="1.725">Very active</option>
-                    <option value="1.9">Extra active</option>
-                </select>
-            </div>
-            <button type="button" onclick="calculateDiet()">Calculate</button>
-        </form>
-    </section>
-    
-    <!-- The Modal -->
-    <div id="resultModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="calculator-results">
-                <!-- Results will be displayed here -->
-            </div>
-        </div>
-    </div>
-
-    
-    <script>
-        function calculateDiet() {
-            const age = parseFloat(document.getElementById('age').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            const height = parseFloat(document.getElementById('height').value);
-            
-            if (isNaN(age) || isNaN(weight) || isNaN(height)) {
-                alert('Please fill out all fields correctly.');
-                return;
+                            `).join('')}
+                        </div>
+                    `;
+                    qnaContainer.appendChild(categoryElement);
+                });
+            } catch (error) {
+                console.error("Error fetching Q&A: ", error);
             }
+        }
     
-            // Calculate BMI
-            const heightInMeters = height / 100; // Convert height to meters
-            const bmi = weight / (heightInMeters * heightInMeters);
-    
-            // Determine health advice based on BMI
-            let healthAdvice;
-            if (bmi < 18.5) {
-                healthAdvice = "You are underweight. It's important to eat a balanced diet and consult with a healthcare provider if necessary.";
-            } else if (bmi >= 18.5 && bmi < 24.9) {
-                healthAdvice = "You have a normal weight. Keep maintaining a healthy lifestyle.";
-            } else if (bmi >= 25 && bmi < 29.9) {
-                healthAdvice = "You are overweight. Consider adopting a healthier diet and increasing physical activity.";
+        // Toggle answer visibility
+        window.toggleAnswer = function(element) {
+            const answer = element.nextElementSibling;
+            const arrow = element.querySelector("span");
+            if (answer.style.display === "block") {
+                answer.style.display = "none";
+                arrow.innerHTML = "&#9662;"; // Down arrow
             } else {
-                healthAdvice = "You are obese. It's advisable to consult with a healthcare provider for personalized advice.";
+                answer.style.display = "block";
+                arrow.innerHTML = "&#9652;"; // Up arrow
             }
+        };
     
-            // Update the results in the modal
-            document.getElementById('calculator-results').innerHTML = `
-                <p>Your BMI is <strong>${bmi.toFixed(2)}</strong>.</p>
-                <p>${healthAdvice}</p>
-            `;
-    
-            // Show the modal
-            document.getElementById('resultModal').style.display = "block";
-        }
-    
-        function closeModal() {
-            document.getElementById('resultModal').style.display = "none";
-        }
-    
-        // Close the modal when clicking outside of it
-        window.onclick = function(event) {
-            const modal = document.getElementById('resultModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
+        // Toggle category visibility
+        window.toggleCategory = function(element) {
+            const faqs = element.nextElementSibling;
+            const arrow = element.querySelector("span");
+            if (faqs.style.display === "block") {
+                faqs.style.display = "none";
+                arrow.innerHTML = "&#9662;"; // Down arrow
+            } else {
+                faqs.style.display = "block";
+                arrow.innerHTML = "&#9652;"; // Up arrow
             }
+        };
+    
+        // Load testimonials and fetch Q&A data on page load
+        window.addEventListener('load', () => {
+            loadTestimonials();
+            fetchQA();
+        });
+    
+    
+        // Function to fetch promo code and discount value from Firestore
+    const fetchPromoCode = async () => {
+        try {
+            const promoRef = collection(db, 'promoCode'); // Collection reference
+            const querySnapshot = await getDocs(promoRef);
+            
+            if (!querySnapshot.empty) {
+                // Assuming only one document in the promoCode collection
+                querySnapshot.forEach(doc => {
+                    const promoCode = doc.data().promocode; // Adjusted field name to 'promocode'
+                    const discountValue = doc.data().discountValue; // Adjusted field name to 'discountValue'
+                    displayPromoCode(promoCode, discountValue);
+                });
+            } else {
+                console.log("No promo code found!");
+            }
+        } catch (error) {
+            console.error("Error fetching promo code:", error);
         }
+    };
+    
+    // Function to display promo code and discount value in the HTML
+    const displayPromoCode = (promoCode, discountValue) => {
+        const promoContainer = document.getElementById('promoContainer');
+        promoContainer.innerHTML = `
+            <br>
+            <p>Use Promo Code: <strong>${promoCode}</strong> to save $${discountValue} on your consultation!</p>
+        `;
+    };
+    
+    // Call fetchPromoCode to load the promo code on page load
+    window.addEventListener('load', fetchPromoCode);
+    
+    
     </script>
     
-
-    <!-- what our user says -->
-    <section id="testimonials" class="testimonials">
-        <h2>What Our Users Say</h2>
-        <div id="testimonial-list">
-            <!-- Testimonials will be dynamically inserted here -->
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="qna" class="qna-section">
-        <br>
-        <br>
-        <h2>Frequently Asked Questions (FAQ) </h2>
-        <div class="qna-container" id="qnaContainer">
-            <!-- Q&A items will be dynamically inserted here -->
-        </div>
-        <br>
-        <br>
-    </section>
-
-    <!-- promo code  -->
-    <section id="promo" class="promo-section">
-        <br>
-        <br>
-        <h2>Apply Your Promo Code and Save More!</h2>
-        <div class="promo-container" id="promoContainer">
+    <head>
+    
+        <!-- Import Firebase JS SDK -->
+    
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Diet, Diet, Must Try! - Download Our App</title>
+        <link rel="stylesheet" href="website.css">
+    </head>
+    <body>
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="app-debug.apk">Download</a></li>
+                </ul>
+            </nav>
+        </header>
+    
+        <section id="home" class="intro">
+            <div class="overlay">
+                <div class="content">
+                    <img src="logo.png" alt="Diet Diet Must Try Logo" class="logo1">
+                    <h1>Get Your Apps Now!</h1>
+                    <p>Achieve your health goals effortlessly with our personalized diet recommendation app!</p>
+                    <a href="app-debug.apk" class="cta" download>Download Now!</a>
+                </div>
+                
+                <div class="app-video">
+                    <video autoplay muted loop>
+                        <source src="projectVideo.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
         
+                <div class="app-image">
+                    <img src="homepage.jpeg" alt="Homepage Preview" class="homepage-image">
+                </div>
+            </div>
+        </section>
+        
+        
+        <!-- Why Choose Us (special features we offering) -->
+    
+        <section id="features" class="features">
+            <h2>Why Choose Us</h2>
+            <div class="feature-container">
+                <div class="feature">
+                    <h3>Personalized Diet Plans</h3>
+                    <hr>
+                    <p>Our app offers <b> personalized diet plans tailored to your health goals and dietary preferences </b>. We assess your lifestyle and specific needs to create flexible meal plans that help you lose weight, gain muscle, or maintain a healthy lifestyle without feeling deprived.</p>
+                </div>
+                <div class="feature">
+                    <h3>Track Your Progress</h3>
+                    <hr>
+                    <p>Monitor your health journey with our tracking tools. Log your meals effortlessly using <b>image recognition</b> to gain insights into your habits. Visual progress reports help motivate you and allow you to set achievable milestones, making tracking rewarding and simple.</p>
+                </div>
+                <div class="feature">
+                    <h3>Chat with a Nutritionist</h3>
+                    <hr>
+                    <p>Receive <b>real-time support</b> through our chat feature. Our nutritionists are available to answer questions and provide guidance, ensuring you have the professional support you need to succeed on your health journey and make informed nutritional choices.</p>
+                </div>
+            </div>
+        </section>
+        
+    
+        <!-- Diet Calculator -->
+    
+        <section id="diet-calculator" class="diet-calculator">
+            <h2>Try Out Our Diet Calculator!</h2>
+            <form id="calculator-form">
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" name="weight" required>
+                </div>
+                <div class="form-group">
+                    <label for="height">Height (cm):</label>
+                    <input type="number" id="height" name="height" required>
+                </div>
+                <div class="form-group">
+                    <label for="activity-level">Activity Level:</label>
+                    <select id="activity-level" name="activity-level" required>
+                        <option value="1.2">Sedentary</option>
+                        <option value="1.375">Lightly active</option>
+                        <option value="1.55">Moderately active</option>
+                        <option value="1.725">Very active</option>
+                        <option value="1.9">Extra active</option>
+                    </select>
+                </div>
+                <button type="button" onclick="calculateDiet()">Calculate</button>
+            </form>
+        </section>
+        
+        <!-- The Modal -->
+        <div id="resultModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="calculator-results">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
         </div>
-        <br>
-        <br>
+    
+        
+        <script>
+            function calculateDiet() {
+                const age = parseFloat(document.getElementById('age').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                const height = parseFloat(document.getElementById('height').value);
+                
+                if (isNaN(age) || isNaN(weight) || isNaN(height)) {
+                    alert('Please fill out all fields correctly.');
+                    return;
+                }
+        
+                // Calculate BMI
+                const heightInMeters = height / 100; // Convert height to meters
+                const bmi = weight / (heightInMeters * heightInMeters);
+        
+                // Determine health advice based on BMI
+                let healthAdvice;
+                if (bmi < 18.5) {
+                    healthAdvice = "You are underweight. It's important to eat a balanced diet and consult with a healthcare provider if necessary.";
+                } else if (bmi >= 18.5 && bmi < 24.9) {
+                    healthAdvice = "You have a normal weight. Keep maintaining a healthy lifestyle.";
+                } else if (bmi >= 25 && bmi < 29.9) {
+                    healthAdvice = "You are overweight. Consider adopting a healthier diet and increasing physical activity.";
+                } else {
+                    healthAdvice = "You are obese. It's advisable to consult with a healthcare provider for personalized advice.";
+                }
+        
+                // Update the results in the modal
+                document.getElementById('calculator-results').innerHTML = `
+                    <p>Your BMI is <strong>${bmi.toFixed(2)}</strong>.</p>
+                    <p>${healthAdvice}</p>
+                `;
+        
+                // Show the modal
+                document.getElementById('resultModal').style.display = "block";
+            }
+        
+            function closeModal() {
+                document.getElementById('resultModal').style.display = "none";
+            }
+        
+            // Close the modal when clicking outside of it
+            window.onclick = function(event) {
+                const modal = document.getElementById('resultModal');
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
+        
+    
+        <!-- what our user says -->
+        <section id="testimonials" class="testimonials">
+            <h2>What Our Users Say</h2>
+            <div id="testimonial-list">
+                <!-- Testimonials will be dynamically inserted here -->
+            </div>
+        </section>
+    
+        <!-- FAQ Section -->
+        <section id="qna" class="qna-section">
+            <br>
+            <br>
+            <h2>Frequently Asked Questions (FAQ) </h2>
+            <div class="qna-container" id="qnaContainer">
+                <!-- Q&A items will be dynamically inserted here -->
+            </div>
+            <br>
+            <br>
+        </section>
+    
+        <!-- promo code  -->
+        <section id="promo" class="promo-section">
+            <br>
+            <br>
+            <h2>Apply Your Promo Code and Save More!</h2>
+            <div class="promo-container" id="promoContainer">
+            
+            </div>
+            <br>
+            <br>
+        </section>
+    
     </section>
-
-</section>
-
-
-
-
-</body>
-
-<!-- Footer -->
-<footer>
-    <p>&copy; 2024 Diet, Diet, Must Try! All Rights Reserved.</p>
-    <ul>
-        <li><a href="https://www.termsfeed.com/live/fbe303a3-7045-4436-bf96-e7af4cc82780">Privacy Policy</a></li>
-        <li><a href="#terms">Terms of Service</a></li>
-    </ul>
-</footer>
-
-</html>
-
+    
+    
+    
+    
+    </body>
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Diet, Diet, Must Try! All Rights Reserved.</p>
+        <ul>
+            <li><a href="https://www.termsfeed.com/live/fbe303a3-7045-4436-bf96-e7af4cc82780">Privacy Policy</a></li>
+        </ul>
+    </footer>
+    
+    </html>
+    
+    
