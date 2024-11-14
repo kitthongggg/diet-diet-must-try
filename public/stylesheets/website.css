@@ -489,117 +489,40 @@ footer ul li a:hover {
 
 /* Styling the form */
 
-/* General styling for the register section */
-.register-session {
-    padding: 20px 20px;
-    background: #546a42ac; /* Green background */
-    text-align: center;
-    font-style: oblique;
-    font-family:serif;
-}
 
-.register-session h1 {
-    font-size: 36px;
-    color: white;
-    margin-bottom: 40px;
-    font-style: oblique;
-    font-family:serif;
-}
-
-/* Style for the register row */
-.register-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 20px;
-}
-
-/* Left Column (Registration Form) */
-.left-column {
-    flex: 1;
-    margin-right: 20px;
-    margin-left: 40px;
-    background: #f4f4eb; /* Grey background for the form */
-    padding: 20px;
-    max-height: fit-content;
-    max-width: 450px;
+/* Style for the promo section */
+.promo-section {
+    background-color: #81965e8b; /* Light sage background */
+    padding: 30px;
     border-radius: 10px;
+    text-align: center;
+    color: #3d3b30;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Right Column (Text Section) */
-.right-column {
-    flex: 1;
-    margin-left: 20px;
-    padding: 20px;
-}
-
-/* Form Styling */
-.register-form label, .register-form input, .register-form select, .register-form button {
-    display: block;
-    width: 100%;
-    margin-bottom: 15px;
-    font-style: oblique;
-    font-family:serif;
-}
-
-.register-form input, .register-form select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    
-}
-
-.register-form button {
-    background-color: #3a5d3b;
-    color: white;
-    max-width: fit-content;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 auto; /* Center the button */
-    display: block;
-}
-
-.register-form button:hover {
-    background-color: #45a049;
-}
-
-/* General styling for the right side text */
-.right-column h2 {
-    margin-bottom: 10px;
-    font-style: oblique;
-    font-family:serif;
-}
-
-.right-column p, .right-column ul {
-    font-size: 16px;
-    line-height: 1.6;
-    font-style: oblique;
-    font-family:serif;
-}
-
-.right-column ul {
-    padding-left: 20px;
-}
-
-.right-column ul li {
+/* Style for the heading */
+.promo-section h2 {
+    color: #2a220ede; /* Darker brown */
+    font-size: 24px;
+    font-weight: bold;
     margin-bottom: 10px;
 }
 
-/* succefully download */
-
-.download-button {
+/* Style for the promo code container */
+.promo-container {
+    font-size: 18px;
+    color: #4b422b;
+    background-color: #f4f4eb;
+    padding: 5px;
+    border-radius: 8px;
     display: inline-block;
-    padding: 10px 20px;
-    background-color: #3a5d3b;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.download-button:hover {
-    background-color: #2e4b2f;
+/* Bold the promo code itself */
+.promo-container strong {
+    color: #d16e20; /* Highlight color for promo code */
+    font-weight: bold;
 }
-

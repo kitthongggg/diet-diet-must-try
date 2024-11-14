@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="stylesheet" href="/stylesheets/main.css">
-    <link rel="stylesheet" href="/stylesheets/website.css">
+
 <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -24,53 +23,6 @@
     const analytics = getAnalytics(app);
     const db = getFirestore(app); // Initialize Firestore
 
-    // Handle user registration
-    async function handleSubmit(event) {
-        // Prevent the default form submission
-        event.preventDefault();
-
-        // Get form data
-        const userName = document.getElementById('userName').value.trim();
-        const userEmail = document.getElementById('userEmail').value.trim();
-        const userPhone = document.getElementById('userPhone').value.trim();
-        const userPassword = document.getElementById('userPassword').value;
-        const userConfirmPassword = document.getElementById('userConfirmPassword').value;
-        const role = document.getElementById('role').value;
-
-        // Validate form fields
-        if (!userName || !userEmail || !userPhone || !userPassword || !userConfirmPassword || !role) {
-            alert('Please fill in all fields.');
-            return;
-        }
-
-        if (userPassword.length < 6) {
-        alert('Password must be at least 6 characters long.');
-        return;
-    }
-
-        if (userPassword !== userConfirmPassword) {
-            alert('Passwords do not match. Please try again.');
-            return;
-        }
-
-        try {
-            // Add user data to Firestore
-            await addDoc(collection(db, 'testingUser'), {
-                username: userName,
-                password: userPassword, // Be careful about storing passwords in plain text
-                email: userEmail,
-                phoneNumber: userPhone,
-                role: role
-            });
-
-            alert('Registration successful!');
-            // Redirect to website2.html only if registration is successful
-            window.location.href = 'website2.html';
-        } catch (error) {
-            console.error('Error adding document: ', error);
-            alert(`Error during registration: ${error.message}`);
-        }
-    }
 
     // Load testimonials
     async function loadTestimonials() {
@@ -236,6 +188,40 @@
         loadTestimonials();
         fetchQA();
     });
+
+
+    // Function to fetch promo code and discount value from Firestore
+const fetchPromoCode = async () => {
+    try {
+        const promoRef = collection(db, 'promoCode'); // Collection reference
+        const querySnapshot = await getDocs(promoRef);
+        
+        if (!querySnapshot.empty) {
+            // Assuming only one document in the promoCode collection
+            querySnapshot.forEach(doc => {
+                const promoCode = doc.data().promocode; // Adjusted field name to 'promocode'
+                const discountValue = doc.data().discountValue; // Adjusted field name to 'discountValue'
+                displayPromoCode(promoCode, discountValue);
+            });
+        } else {
+            console.log("No promo code found!");
+        }
+    } catch (error) {
+        console.error("Error fetching promo code:", error);
+    }
+};
+
+// Function to display promo code and discount value in the HTML
+const displayPromoCode = (promoCode, discountValue) => {
+    const promoContainer = document.getElementById('promoContainer');
+    promoContainer.innerHTML = `
+        <br>
+        <p>Use Promo Code: <strong>${promoCode}</strong> to save $${discountValue} on your consultation!</p>
+    `;
+};
+
+// Call fetchPromoCode to load the promo code on page load
+window.addEventListener('load', fetchPromoCode);
 
 
 </script>
@@ -416,7 +402,17 @@
         <br>
     </section>
 
-
+    <!-- promo code  -->
+    <section id="promo" class="promo-section">
+        <br>
+        <br>
+        <h2>Apply Your Promo Code and Save More!</h2>
+        <div class="promo-container" id="promoContainer">
+        
+        </div>
+        <br>
+        <br>
+    </section>
 
 </section>
 
