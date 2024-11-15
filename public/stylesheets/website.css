@@ -97,7 +97,7 @@ nav ul li a {
 
 
 .app-video, .app-image {
-    width: 350px; 
+    width: auto; 
     height: 520px; 
     margin: 10px; 
     display: flex;
