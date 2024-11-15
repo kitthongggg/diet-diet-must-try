@@ -535,48 +535,99 @@ footer ul li a:hover {
     font-weight: bold;
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
-    /* General layout adjustments */
-    .overlay {
-        flex-direction: column;
-        align-items: center;
+    /* Header adjustments */
+    header {
+        padding: 0.5rem;
+        height: auto;
+        text-align: center;
     }
-
     nav ul li {
         display: block;
-        margin: 5px 0; /* Stack nav items vertically */
+        margin: 5px 0;
     }
 
-    .app-video, .app-image {
-        width: 100%;
-        margin: 10px 0; /* Full width images with margin */
-    }
-
-    .feature-container {
+    /* Home Section (Intro) */
+    #home .overlay {
         flex-direction: column;
+        padding: 15px;
     }
-
-    .feature {
-        width: 100%; /* Full width for features */
+    .content, .app-video, .app-image {
+        max-width: 100%;
         margin: 10px 0;
     }
-
-    .content, .promo-container, #calculator-form, .qna-container {
-        padding: 15px; /* Add padding for small screens */
-    }
-
-    /* Font size adjustments */
     h1 {
-        font-size: 1.8rem; /* Smaller heading */
+        font-size: 1.8rem;
+    }
+    .cta {
+        padding: 10px 20px;
+        font-size: 1rem;
     }
 
-    p, .feature h3, .features h2 {
-        font-size: 1.2rem; /* Smaller text */
+    /* Features Section */
+    .feature-container {
+        flex-direction: column;
+        padding: 15px;
+    }
+    .feature {
+        width: 100%;
+        margin: 10px 0;
+    }
+    .features h2 {
+        font-size: 2rem;
+    }
+    .features h3 {
+        font-size: 1.4rem;
     }
 
-    /* Button adjustments */
-    .cta, button {
+    /* Diet Calculator */
+    #diet-calculator {
+        padding: 2rem 1rem;
+    }
+    #calculator-form {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    .form-group label, .form-group input, .form-group select, button {
+        font-size: 1rem;
+    }
+
+    /* Testimonials Section */
+    .testimonials h2 {
+        font-size: 2rem;
+    }
+    .testimonial {
+        font-size: 1rem;
+    }
+
+    /* FAQ Section */
+    .qna-section {
+        padding: 2rem 1rem;
+    }
+    .qna-container, .category, .question {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+
+    /* Promo Section */
+    .promo-section {
+        padding: 2rem 1rem;
+    }
+    .promo-section h2 {
+        font-size: 1.8rem;
+    }
+    .promo-container {
         padding: 10px;
-        font-size: 1rem; /* Reduce padding and font size */
+        font-size: 1rem;
+    }
+
+    /* Footer */
+    footer p {
+        font-size: 0.9rem;
+    }
+    footer ul li {
+        display: block;
+        margin: 5px 0;
     }
 }
