@@ -556,11 +556,11 @@ footer ul li a:hover {
         width: 100%; /* Match container width */
         height: 100%; /* Match container height */
         max-width: 300px; /* Ensures both stay the same size */
-        max-height: 520px; /* Sets a consistent max height */
+        max-height: auto; /* Sets a consistent max height */
         object-fit: cover; /* Ensures content fits within bounds */
         border-radius: 8px; /* Optional: Rounded corners */
     }
-    
+
     /* Header adjustments */
     header {
         padding: 0.5rem;
