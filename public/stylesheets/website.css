@@ -106,6 +106,7 @@ nav ul li a {
     max-width: 285px; /* Set a max width for the image */
     margin-left: -20px; /* Adds space between the video and the image */
     margin-top: -65px;
+    height: 520px;
 }
 
 .app-image img {
