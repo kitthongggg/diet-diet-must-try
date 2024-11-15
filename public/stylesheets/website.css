@@ -534,3 +534,49 @@ footer ul li a:hover {
     color: #d16e20; /* Highlight color for promo code */
     font-weight: bold;
 }
+
+@media (max-width: 768px) {
+    /* General layout adjustments */
+    .overlay {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul li {
+        display: block;
+        margin: 5px 0; /* Stack nav items vertically */
+    }
+
+    .app-video, .app-image {
+        width: 100%;
+        margin: 10px 0; /* Full width images with margin */
+    }
+
+    .feature-container {
+        flex-direction: column;
+    }
+
+    .feature {
+        width: 100%; /* Full width for features */
+        margin: 10px 0;
+    }
+
+    .content, .promo-container, #calculator-form, .qna-container {
+        padding: 15px; /* Add padding for small screens */
+    }
+
+    /* Font size adjustments */
+    h1 {
+        font-size: 1.8rem; /* Smaller heading */
+    }
+
+    p, .feature h3, .features h2 {
+        font-size: 1.2rem; /* Smaller text */
+    }
+
+    /* Button adjustments */
+    .cta, button {
+        padding: 10px;
+        font-size: 1rem; /* Reduce padding and font size */
+    }
+}
