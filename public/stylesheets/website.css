@@ -69,17 +69,17 @@ nav ul {
 
 nav ul li {
     display: inline;
-    margin: 0 10px; /* Margin between items */
+    margin: 0 10px; 
 }
 
 nav ul li a {
     color: rgb(73, 51, 42);
     font-weight: bold;
-    font-size: 0.9rem; /* Reduced font size */
-    line-height: 1; /* Adjusted line height */
+    font-size: 0.9rem; 
+    line-height: 1; 
 }
 #home {
-    background-color: #f4f4eb; /* Light green background */
+    background-color: #f4f4eb; 
     padding: 50px 0;
     display: flex;
     justify-content: center;
@@ -88,30 +88,34 @@ nav ul li a {
 
 .overlay {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
 }
 
-.app-video {
-    width: 300px; /* Set a fixed width for the video container */
-    height: 520px;
-    margin-right: 40px; /* Move video slightly to the right */
-    margin-left: 300px;
+
+.app-video, .app-image {
+    width: 300px; 
+    height: 520px; 
+    margin: 10px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.app-image {
-    max-width: 285px; /* Set a max width for the image */
-    margin-left: -20px; /* Adds space between the video and the image */
-    margin-top: -65px;
-    height: 520px;
+
+.app-video video, .app-image img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    border-radius: 8px; 
 }
 
 .app-image img {
     width: 100%;
-    border-radius: 10px; /* Optional: Adds rounded corners to the image */
+    border-radius: 10px; 
 }
 
 .content {
