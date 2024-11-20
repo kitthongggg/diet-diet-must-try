@@ -244,7 +244,7 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="app-debug.apk">Download</a></li>
+                    <li><a href="#home">Download</a></li>
                 </ul>
             </nav>
         </header>
@@ -255,7 +255,7 @@
                     <img src="logo.png" alt="Diet Diet Must Try Logo" class="logo1">
                     <h1>Get Your Apps Now!</h1>
                     <p>Achieve your health goals effortlessly with our personalized diet recommendation app!</p>
-                    <a href="dietdietmusttry.apk" class="cta" download>Download Now!</a>
+                    <a href="dietdietmusttry.apk" id="download-btn" class="cta" download>Download Now!</a>
                 </div>
                 
                 <div class="app-video">
@@ -333,7 +333,26 @@
                 </div>
             </div>
         </div>
-    
+
+        <script>
+            let downloadCount = 0;
+            const maxDownloads = 3;
+        
+            const downloadBtn = document.getElementById('download-btn');
+            downloadBtn.addEventListener('click', (event) => {
+                
+                downloadCount++;
+        
+                // Check if the limit has been reached
+                if (downloadCount >= maxDownloads) {
+                    // Prevent further clicks
+                    event.preventDefault(); // Stop navigation
+                    downloadBtn.textContent = "Limit Reached";
+                    downloadBtn.style.pointerEvents = "none"; // Disable clicks
+                    downloadBtn.style.opacity = "0.5"; // Optional: Make the button visually appear disabled
+                }
+            });
+        </script>
         
         <script>
             function calculateDiet() {
